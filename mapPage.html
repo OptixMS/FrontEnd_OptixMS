@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#3E3E3E] min-h-screen flex flex-col">
+    <!-- Header -->
+    <header
+      class="flex justify-between items-center p-6 bg-[#3E3E3E] shadow-lg"
+    >
+      <a href="dashboard.html">
+        <img src="img/back.png" class="h-10" />
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-white">Maintenance your System</span>
+        <div
+          class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center"
+        >
+          <span class="text-lg text-white">👤</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-6 text-white mx-40">
+      <div class="bg-[#2F2F2F] text-white p-6 rounded-lg shadow-lg text-center">
+        <h2 class="text-3xl font-bold p-2">Site Temperature</h2>
+      </div>
+      <div class="flex justify-center items-center mt-4">
+        <div class="rounded-xl shadow-xl max-w-4xl w-full">
+          <img
+            src="img/mapDashboard.png"
+            alt="Palapa Ring Map"
+            class="w-full rounded-xl mx-auto"
+          />
+        </div>
+      </div>
+      <div class="max-w-5xl mx-auto mt-8">
+        <div class="text-white p-4">
+          <h2 class="text-center text-xl font-bold mb-4">About Site</h2>
+          <div class="overflow-x-auto rounded-xl">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-[#2F2F2F] text-white">
+                  <th class="p-3">Site</th>
+                  <th class="p-3">Kab./kota</th>
+                  <th class="p-3">Provinsi</th>
+                  <th class="p-3">Longitude & Latitude</th>
+                  <th class="p-3">Catatan</th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-300">
+                <tr class="border-b">
+                  <td class="p-3">Long Bagun</td>
+                  <td class="p-3">Mahakam Ulu</td>
+                  <td class="p-3">Kalimantan Timur</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Service Point</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="p-3">Sendawar</td>
+                  <td class="p-3">Kutai Barat</td>
+                  <td class="p-3">Kalimantan Timur</td>
+                  <td class="p-3">115°40'0.44"E 0°13'54.19"S</td>
+                  <td class="p-3">Interconnection Point</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="p-3">Bungku</td>
+                  <td class="p-3">Morowali</td>
+                  <td class="p-3">Sulawesi Tengah</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Service Point</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="p-3">Petasia</td>
+                  <td class="p-3">Morowali</td>
+                  <td class="p-3">Sulawesi Tengah</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Service Point</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="p-3">Tentena</td>
+                  <td class="p-3">Poso</td>
+                  <td class="p-3">Sulawesi Tengah</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Interconnection Point</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="p-3">Wanggudu</td>
+                  <td class="p-3">Konawe Utara</td>
+                  <td class="p-3">Sulawesi Tenggara</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Service Point</td>
+                </tr>
+                <tr>
+                  <td class="p-3">Kendari</td>
+                  <td class="p-3">Kota Kendari</td>
+                  <td class="p-3">Sulawesi Tenggara</td>
+                  <td class="p-3">115°14'29.51"E 0°30'50.87"N</td>
+                  <td class="p-3">Interconnection Point</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

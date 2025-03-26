@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#3E3E3E] text-white">
+    <!-- Header -->
+    <header
+      class="flex justify-between items-center p-6 bg-[#3E3E3E] shadow-lg"
+    >
+      <a href="dashboard.html">
+        <img src="img/logo.png" alt="OptixMS Logo" class="h-10" />
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="text-sm">Maintenance your System</span>
+        <div
+          class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center"
+        >
+          <span class="text-lg">👤</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="p-6 grid grid-cols-3 gap-6">
+      <!-- Left Column -->
+      <div class="space-y-6">
+        <div
+          class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center hover:bg-[#3A3A3A] transition"
+        >
+          <a href="temperaturPage.html" class="block">
+            <h2 class="font-semibold">Site Temperature</h2>
+            <div class="flex justify-center mt-4 text-orange-500">
+              <img
+                src="img/temperatur.png"
+                alt="Temperature Icon"
+                class="h-38 p-2"
+              />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center hover:bg-[#3A3A3A] transition"
+        >
+          <a href="devicePage.html" class="block">
+            <h2 class="font-semibold">Site Device</h2>
+            <div class="flex justify-center mt-4 text-orange-500">
+              <img src="img/device.png" alt="Device Icon" class="p-9 h-38" />
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Middle Column -->
+      <div class="space-y-6">
+        <div
+          class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center text-xl font-semibold"
+        >
+          Welcome, user! 👋
+        </div>
+
+        <div
+          class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center hover:bg-[#3A3A3A] transition"
+        >
+          <a href="mapPage.html" class="block">
+            <h2 class="font-semibold">Map of Site</h2>
+            <img
+              src="img/mapDashboard.png"
+              alt="Map"
+              class="mt-4 rounded-lg w-full object-cover"
+            />
+          </a>
+        </div>
+
+        <div
+          class="bg-gradient-to-r from-[#00697C] to-[#FFAB5B] p-4 rounded-lg shadow-md text-center"
+        >
+          <button
+            class="bg-black px-6 py-3 rounded-lg shadow-md text-white font-bold"
+          >
+            Predict Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <div
+          class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center hover:bg-[#3A3A3A] transition"
+        >
+          <a href="aboutPage.html" class="block">
+            <h2 class="font-semibold">About Palapa Ring</h2>
+            <div class="flex justify-center mt-4 text-teal-500">
+              <img src="img/aboutLogo.png" alt="About Logo" class="h-38 p-2" />
+            </div>
+          </a>
+        </div>
+
+        <div class="bg-[#2F2F2F] p-6 rounded-lg shadow-md text-center">
+          <h2 class="font-semibold">History</h2>
+          <div class="flex justify-center mt-4 text-teal-500">
+            <img src="img/history.png" alt="History Icon" class="h-38 p-7" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

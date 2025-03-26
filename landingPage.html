@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OptixMS - About The Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-black text-white">
+    <div class="relative h-screen w-full">
+      <!-- Background Image -->
+      <div class="absolute inset-0">
+        <img
+          src="img/landingPage.png"
+          alt="Background"
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+
+      <!-- Navbar -->
+      <nav
+        class="absolute top-0 left-0 w-full px-10 p-6 flex justify-between items-center z-10"
+      >
+        <img src="img/logo.png" alt="OptixMS Logo" class="h-16" />
+        <!-- Ganti dengan path logo yang sesuai -->
+        <div>
+          <button
+            class="backdrop-blur-md bg-white bg-opacity-10 text-white px-4 py-2 rounded-lg mr-2 hover:bg-opacity-20"
+            onclick="window.location.href='signUpPage.html'"
+          >
+            Sign Up
+          </button>
+          <button
+            class="backdrop-blur-md bg-white bg-opacity-10 text-white px-4 py-2 rounded-lg hover:bg-opacity-20"
+            onclick="window.location.href='loginPage.html'"
+          >
+            Login
+          </button>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div
+        class="absolute inset-0 flex flex-col justify-center items-start p-16 max-w-3xl z-10"
+      >
+        <h2 class="text-8xl font-bold leading-tight">
+          About <br />
+          The Project
+        </h2>
+        <p class="mt-6 text-2xl">
+          Our project focuses on developing a predictive maintenance system for
+          optical networks using machine learning. By analyzing key network
+          parameters, our system can detect potential failures before they
+          occur, reducing downtime and improving overall network reliability.
+          This solution enables proactive maintenance, ensuring optimal
+          performance and efficiency for high-speed optical communication
+          systems.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
