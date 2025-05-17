@@ -35,11 +35,11 @@
                   class="input-field"
                 />
               </div>
-              <button type="submit" class="login-button">Login</button>
+              <router-link to="/dashboard"><button type="submit" class="login-button">Login</button></router-link>
             </form>
             <div class="action-links text-sm text-white">
               <router-link to="/register" class="create">Create an account</router-link>
-              <a href="#" class="forgot">Forgot Password?</a>
+              <router-link to="/forgot" class="forgot">Forgot Password?</router-link>
             </div>
           </div>
         </div>
@@ -47,21 +47,33 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'LoginPage',
-    data() {
-      return {
-        username: '',
-        password: ''
-      };
-    },
-    methods: {
-      handleLogin() {
-        this.$router.push('/dashboard');
-      }
+  <script setup>
+  import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import axios from 'axios'
+
+  const username = ref('')
+  const password = ref('')
+  const error = ref('')
+  const router = useRouter()
+
+  const handleLogin = async () => {
+  error.value = ''
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
+      username: username.value,
+      password: password.value
+    })
+    if (response.data.success) {
+      localStorage.setItem('username', response.data.username)
+      router.push(`/dashboard/${response.data.username}`)
+    } else {
+      error.value = response.data.message || 'Login gagal.'
     }
-  };
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Gagal terhubung ke server.'
+  }
+  }
   </script>
   
   <style scoped>
@@ -71,21 +83,32 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.create,
+.create {
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  font-size: 12.8px;
+  text-decoration: underline;
+  margin: 0;
+}
+
 .forgot {
   font-family: 'Poppins', sans-serif;
   color: white;
-  font-size: 12px;
-  /* Reset margin supaya sejajar */
-  margin: 0;
-  margin-left: 200px;
+  font-size: 12.8px;
+  text-decoration: underline;
+  margin-left: 2rem;
 }
 
 /* Container flex untuk create dan forgot */
 .action-links {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0 15rem; /* beri padding horizontal untuk jarak dari tepi */
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .login-page-container {
