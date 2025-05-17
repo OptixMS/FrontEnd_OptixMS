@@ -28,10 +28,8 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'LandingPage',
-};
+<script setup>
+// Saat ini landing page hanya navigasi, tidak butuh koneksi API
 </script>
 
 <style scoped>
@@ -99,7 +97,6 @@ export default {
   display: inline-block; /* Supaya tampil kayak tombol */
 }
 
-
 .btn:hover {
   opacity: 0.8;
 }
@@ -126,13 +123,9 @@ export default {
   padding-left: 3rem;
   margin-top: -1rem;
   text-align: justify;
+  margin-bottom: 3rem;
 
   max-height: 9rem; /* 5 x 1.6rem = 8rem */
   overflow: hidden;
 }
-
-
-
 </style>
-
-  

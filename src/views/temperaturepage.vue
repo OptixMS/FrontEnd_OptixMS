@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen w-full bg-[#3e3e3e] text-white font-poppins px-20 py-10">
+  <div class="temperature-container font-poppins">
     <!-- Header -->
     <div class="cardheader">
-      <router-link to="/dashboard" class="flex items-center">
+      <router-link to="/dashboard">
         <img src="@/assets/img/back.png" alt="Back" class="back" />
       </router-link>
     </div>
@@ -13,18 +13,15 @@
     </div>
 
     <!-- Grid Cards -->
-    <div class="grid grid-cols-4 gap-6">
+    <div class="card-grid">
       <div
         v-for="site in sites"
         :key="site.name"
+        class="cardtemperature"
       >
-
-    <!-- Banggai -->
-    <div class="cardtemperature">
-          <img src="@/assets/img/temperatur.png" alt="About" class="sizeicon" />
-          <div class="cardtemps">{{ site.name }}</div>
-          <div class="cardtemps">{{ site.temp }}°C</div>
-        </div>
+        <img src="@/assets/img/temperatur.png" alt="Temperature Icon" class="sizeicon" />
+        <div class="cardtemps">{{ site.name }}</div>
+        <div class="cardtemps">{{ site.temp }}°C</div>
       </div>
     </div>
   </div>
@@ -76,96 +73,108 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Desktop-only constraint */
+/* Hanya tampil di PC */
 @media (max-width: 1023px) {
   body {
     display: none;
   }
 }
 
-.sizeicon {
-  height: 130px; /* Atur ukuran logo */
- }
+.temperature-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #4f4f4f;
+  color: white;
+  padding: 2rem 4vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 0 4vw 4rem;
+}
 
-.cardtitle {
-    background-color: #2f2f2f;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    padding: 1rem;
-    height: 30px;
-    width: 1110px;
-    margin-left: 20px;
-    margin-bottom: 10px;
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+/* Header */
+.cardheader {
+  background-color: #4f4f4f;
+  padding: 1rem 3rem;
+  height: 76px;
+  width: calc(100% + 10vw); /* 8vw untuk mengimbangi padding kiri + kanan parent */
+  margin-left: -4vw; /* kompensasi padding parent agar sejajar kiri */
+  margin-right: -4vw; /* opsional: kalau butuh konsisten ke kanan */
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  margin-bottom: 2rem;
+  opacity: 0.9;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+}
 
 .back {
-  height: 40px; /* Atur ukuran logo */
-  margin-left: -34.5rem; /* Geser ke kanan */
-  margin-top: 0px;
- }
+  height: 35px;
+  cursor: pointer;
+  margin-left: 1rem;
+}
 
-.logoprofile {
-  height: 40px; /* Atur ukuran logo */
-  margin-right: 2rem; /* Geser ke kanan */
-  margin-left: 50rem;
-  margin-top: -1rem;
-  margin-bottom: 1rem;
- }
+/* Title */
+.cardtitle {
+  background-color: #2f2f2f;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  height: 50px; /* diperbesar sedikit agar teks tidak terpotong */
+  width: 97%;
+  margin: 20px auto;
+  border-radius: 1rem;
+  max-width: 1200px;
 
- .cardtemperature {
-    background-color: #2f2f2f;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    padding: 1rem;
-    height: 230px;
-    width: 230px;
-    margin-left: 15px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  display: flex;
+  align-items: center;  /* vertikal center */
+  justify-content: center;  /* horizontal center */
+}
 
-  .titletemps {
-    color:#fffefe;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0rem;
-    margin-top: 0rem;
-    text-align: center;
-  }
+.titletemps {
+  background-color: #2f2f2f;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  .cardtemps {
-    color:#fffefe;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0rem;
-    margin-top: 0rem;
-    text-align: center;
-  }
 
-  .cardheader {
-    background-color: #3e3e3e;
-    border-radius: 1rem;
-    box-shadow: inset 0 0 0 1px #292929;
-    opacity: 0.9;
-    padding: 1rem;
-    height: 50px;
-    width: 1168px;
-    margin-left: -20px;
-    margin-bottom: 20px;
-    margin-top: 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+/* Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
+.cardtemperature {
+  background-color: #2f2f2f;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sizeicon {
+  height: 130px;
+}
+
+.cardtemps {
+  color: #fffefe;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
 </style>
+

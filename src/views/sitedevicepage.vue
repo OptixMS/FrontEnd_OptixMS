@@ -1,19 +1,18 @@
 <template>
   <div class="site-device-page font-poppins text-white">
+    <!-- Header -->
     <div class="cardheader">
-    <!-- Back Button -->
-    <router-link to="/dashboard" class="back-button">
-      <img src="@/assets/img/back.png" alt="Back" class="back-button" />
-    </router-link>
+      <router-link to="/dashboard">
+        <img src="@/assets/img/back.png" alt="Back" class="back-button" />
+      </router-link>
     </div>
 
     <div class="container">
-      <!-- Header -->
+      <!-- Section Title -->
       <div class="section-title">About Site Device</div>
 
-      <!-- Chart & Info Section -->
+      <!-- Chart & Legend -->
       <div class="card chart-section">
-        <!-- Legend -->
         <div class="legend">
           <div class="legend-item">
             <div class="circle bg-blue"></div>
@@ -21,16 +20,14 @@
           </div>
           <div class="legend-item">
             <div class="circle bg-orange"></div>
-            <span>Access Point Fibre</span>
+            <span>Terminal Point</span>
           </div>
         </div>
 
-        <!-- Pie Chart -->
         <div class="chart sizemap">
           <PieChart />
         </div>
 
-        <!-- Site Count -->
         <div class="site-count">
           <div class="legend-item">
             <div class="circlesite bg-blues"></div>
@@ -43,9 +40,13 @@
         </div>
       </div>
 
-      <!-- Device Table P4 -->
-      <div class="card">
-        <h2 class="table-title">P4 Detail</h2>
+      <!-- Device Tables -->
+      <div
+        v-for="(table, index) in deviceTables"
+        :key="index"
+        class="card"
+      >
+        <h2 class="table-title">{{ table.title }}</h2>
         <table class="device-table">
           <thead>
             <tr>
@@ -55,145 +56,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Microwave</td>
-              <td>OptiX RTN 980L</td>
-              <td>Long Bagun, Sendawar</td>
-            </tr>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Long Bagun, Sendawar</td>
-            </tr>
-            <tr>
-              <td>8 Repeater</td>
-              <td>OptiX OSN 980L</td>
-              <td>All Site in P4</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Device Table P5 -->
-      <div class="card">
-        <h2 class="table-title">P5 Detail</h2>
-        <table class="device-table">
-          <thead>
-            <tr>
-              <th class="rounded-tl">Device</th>
-              <th>Type</th>
-              <th class="rounded-tr">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800 U16</td>
-              <td>Tentena & Bungku</td>
-            </tr>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Kendari, Petasia, & Wanggudu</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Device Table P6 -->
-      <div class="card">
-        <h2 class="table-title">P6 Detail</h2>
-        <table class="device-table">
-          <thead>
-            <tr>
-              <th class="rounded-tl">Device</th>
-              <th>Type</th>
-              <th class="rounded-tr">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Buranga, Bau-Bau, Lakudo, Wawonii, Sawerigadi, & Raha</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Device Table P7 -->
-      <div class="card">
-        <h2 class="table-title">P7 Detail</h2>
-        <table class="device-table">
-          <thead>
-            <tr>
-              <th class="rounded-tl">Device</th>
-              <th>Type</th>
-              <th class="rounded-tr">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX RTN 980L</td>
-              <td>Luwuk</td>
-            </tr>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Banggai, Sanana, Salakan, & Taliabu</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Device Table P8 -->
-      <div class="card">
-        <h2 class="table-title">P8 Detail</h2>
-        <table class="device-table">
-          <thead>
-            <tr>
-              <th class="rounded-tl">Device</th>
-              <th>Type</th>
-              <th class="rounded-tr">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Microwave</td>
-              <td>OptiX RTN 980L</td>
-              <td>Long Bagun, Sendawar</td>
-            </tr>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Long Bagun, Sendawar</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Device Table P8A -->
-      <div class="card">
-        <h2 class="table-title">P8A Detail</h2>
-        <table class="device-table">
-          <thead>
-            <tr>
-              <th class="rounded-tl">Device</th>
-              <th>Type</th>
-              <th class="rounded-tr">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Microwave</td>
-              <td>OptiX RTN 980L</td>
-              <td>Long Bagun, Sendawar</td>
-            </tr>
-            <tr>
-              <td>Optical Terminal Multiplexer (OTM)</td>
-              <td>OptiX OSN 9800</td>
-              <td>Long Bagun, Sendawar</td>
+            <tr v-for="(row, i) in table.rows" :key="i">
+              <td>{{ row.device }}</td>
+              <td>{{ row.type }}</td>
+              <td>{{ row.location }}</td>
             </tr>
           </tbody>
         </table>
@@ -207,10 +73,55 @@ import PieChart from "@/components/chart.vue";
 
 export default {
   name: "SiteDevicePage",
-  components: {
-    PieChart,
-  },
-};
+  components: { PieChart },
+  data() {
+    return {
+      deviceTables: [
+        {
+          title: "P4 Detail",
+          rows: [
+            { device: "Microwave", type: "OptiX RTN 980L", location: "Long Bagun, Sendawar" },
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Long Bagun, Sendawar" },
+            { device: "8 Repeater", type: "OptiX OSN 980L", location: "Between Long Bagun and Sendawar" }
+          ]
+        },
+        {
+          title: "P5 Detail",
+          rows: [
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16", location: "Tentena & Bungku" },
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Kendari, Petasia, & Wanggudu" }
+          ]
+        },
+        {
+          title: "P6 Detail",
+          rows: [
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Buranga, Bau-Bau, Lakudo, Wawonii, Sawerigadi, & Raha" }
+          ]
+        },
+        {
+          title: "P7 Detail",
+          rows: [
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16L", location: "Luwuk" },
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Banggai, Sanana, Salakan, & Taliabu" }
+          ]
+        },
+        {
+          title: "P8 Detail",
+          rows: [
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16", location: "Ondong" },
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Manado, Tobelo, Morotai, & Tahuna" }
+          ]
+        },
+        {
+          title: "P8A Detail",
+          rows: [
+            { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16", location: "Sofifi, Ternate, & Tidore" }
+          ]
+        }
+      ]
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -220,77 +131,80 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
+.site-device-page {
+  background-color: #4f4f4f;
+  min-height: 100vh;
+  padding: 2rem 4vw;
+  box-sizing: border-box;
+  color: white;
+  overflow-x: hidden;
+  padding: 0 4vw 4rem;
+}
+
 .cardheader {
-  background-color: #3a3a3a;
-  border-radius: 0;
-  padding: 1rem 2rem; /* padding horizontal */
-  height: 50px;
-  width: 1120px;
-  box-shadow: inset 0 0 0 1px #292929;
+  background-color: #4f4f4f;
+  padding: 1rem 3rem;
+  height: 76px;
+  width: calc(100% + 10vw); /* 8vw untuk mengimbangi padding kiri + kanan parent */
+  margin-left: -4vw; /* kompensasi padding parent agar sejajar kiri */
+  margin-right: -4vw; /* opsional: kalau butuh konsisten ke kanan */
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  margin-bottom: 2rem;
   opacity: 0.9;
-  margin-left: -20px;
-  margin-bottom: -25px;
-  margin-top: -35px;
+
   display: flex;
-  flex-direction: row; /* ini diubah ke row! */
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  }
 
-.site-device-page {
-  background-color: #3a3a3a;
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  position: relative;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .back-button {
-  height: 40px;
-  margin-left: 1rem;
-  margin-bottom: 0rem;
-  margin-top: 0rem;
+  height: 35px;
+  cursor: pointer;
 }
 
 .container {
-  max-width: 1152px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding-top: 3rem;
+  padding-top: 1rem;
 }
 
-/* Section title */
+/* Section Title */
 .section-title {
   background-color: #2f2f2f;
-  color:#ffffff;
   border-radius: 0.75rem;
   padding: 1rem;
-  text-align: center;
   font-weight: 600;
-  font-size: 1.25rem;
-  width: 1013px;
-  margin-left: 2.6rem;
+  font-size: 1.5rem;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Card styling */
+/* Card Container */
 .card {
   background-color: #2f2f2f;
-  color: #ffffff;
   border-radius: 0.75rem;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 1000px;
-  margin-left: 2.6rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* Legend & Chart */
 .chart-section {
   flex-direction: column;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .chart-section {
     flex-direction: row;
     justify-content: space-between;
@@ -298,7 +212,6 @@ export default {
   }
 }
 
-/* Legends */
 .legend,
 .site-count {
   display: flex;
@@ -310,39 +223,23 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-left: 3.5rem;
-  
 }
 
-.circle {
+.circle,
+.circlesite {
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: 9999px;
+  border-radius: 50%;
 }
 
-.circlesite { /* for site */
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 9999px;
-  margin-left: -10rem;
-}
-
-.bg-blue {
+.bg-blue,
+.bg-blues {
   background: linear-gradient(to bottom, #00727E, #003038);
 }
 
-.bg-orange {
+.bg-orange,
+.bg-oranges {
   background: linear-gradient(to bottom, #F8AC57, #BE753E);
-}
-
-.bg-blues { /* for site */
-  background: linear-gradient(to bottom, #00727E, #003038);
-  margin-right: 1rem;
-}
-
-.bg-oranges { /* for site */
-  background: linear-gradient(to bottom, #F8AC57, #BE753E);
-  margin-right: 1rem;
 }
 
 .count-label {
@@ -350,11 +247,10 @@ export default {
   font-weight: 600;
 }
 
-/* Chart size */
 .sizemap {
   width: 250px;
   height: 250px;
-  margin-left: -10rem;
+  margin-right: 8rem;
 }
 
 /* Table */
@@ -368,6 +264,7 @@ export default {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  table-layout: fixed;
 }
 
 .device-table th,
@@ -375,6 +272,21 @@ export default {
   padding: 0.75rem 1rem;
   border-top: 1px solid #666;
   border-bottom: 1px solid #666;
+}
+
+.device-table th:nth-child(1),
+.device-table td:nth-child(1) {
+  width: 35%;
+}
+
+device-table th:nth-child(2),
+.device-table td:nth-child(2) {
+  width: 30%;
+}
+
+.device-table th:nth-child(3),
+.device-table td:nth-child(3) {
+  width: 35%;
 }
 
 .device-table thead th {
@@ -388,5 +300,12 @@ export default {
 
 .rounded-tr {
   border-top-right-radius: 0.5rem;
+}
+
+/* Optional: hide for small screen if ever needed */
+@media (max-width: 1023px) {
+  body {
+    display: none;
+  }
 }
 </style>

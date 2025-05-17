@@ -1,18 +1,15 @@
 <template>
     <div class="edit-profile-page">
-      <div class="back-button" @click="goBack">
-        <img src="@/assets/img/back.png" alt="Back" />
-      </div>
+      <div class="cardheader">
+      <router-link to="/profile">
+        <img src="@/assets/img/back.png" alt="Back" class="icon-back" />
+      </router-link>
+    </div>
   
       <div class="profile-content">
         <div class="avatar">
           <img :src="previewImage || defaultAvatar" alt="Avatar" />
         </div>
-  
-        <label class="change-photo">
-          <input type="file" @change="onFileChange" hidden />
-          Change<br />Photo Profile
-        </label>
   
         <div class="form-group">
           <label>Name:</label>
@@ -73,12 +70,39 @@
   <style scoped>
   .edit-profile-page {
     min-height: 100vh;
-    background-color: #333333;
+    background-color: #4f4f4f;
     color: rgb(0, 0, 0);
     font-family: 'Poppins', sans-serif;
     padding: 20px;
     position: relative;
+    overflow-x: hidden;
   }
+
+  .cardheader {
+  position: relative;
+  left: 0;
+  right: 0;
+  width: 100vw; /* gunakan viewport width */
+  max-width: 100vw;
+  height: 76px;
+  background-color: #4f4f4f;
+  padding: 1rem 3rem;
+  margin: 0 auto 2rem auto;
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  opacity: 0.9;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.icon-back {
+  height: 30px;
+  cursor: pointer;
+  padding-bottom: 0rem;
+}
   
   .back-button {
     position: absolute;

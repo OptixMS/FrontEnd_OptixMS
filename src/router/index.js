@@ -15,6 +15,7 @@ import History from '@/views/historypage.vue'
 import Predict from '@/views/predictpage.vue'
 import Profile from '@/views/profile.vue'
 import Edit from '@/views/editprofile.vue'
+import Forgot from '@/views/forgotpass.vue'
 
 const routes = [
   {
@@ -76,6 +77,11 @@ const routes = [
     path: '/edit',
     name: 'Edit',
     component: Edit
+  },
+  {
+    path: '/forgot',
+    name: 'Forgot',
+    component: Forgot
   }
 ]
 

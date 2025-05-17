@@ -1,122 +1,199 @@
 <template>
-    <div class="profile-page">
-      <div class="back-button" @click="goBack">
-        <img src="@/assets/img/back.png" alt="Back" />
+  <div class="profile-container font-poppins">
+    <!-- Header -->
+    <div class="cardheader">
+      <router-link to="/dashboard">
+        <img src="@/assets/img/back.png" alt="Back" class="icon-back" />
+      </router-link>
+    </div>
+
+    <!-- Profile Icon -->
+    <div class="content-wrapper">
+      <div class="avatar-wrapper">
+      <img src="@/assets/img/profilenew.png" alt="Profile Icon" class="profile-icon" />
+    </div>
+
+    <!-- Form Fields -->
+    <div class="form-section">
+      <div class="form-group">
+        <label class="form-label">Name:</label>
+        <input type="text" class="form-input" value="User-user" readonly />
       </div>
-      <div class="profile-content">
-        <div class="form-group">
-          <label>Name:</label>
-          <input type="text" value="User-user" readonly />
-        </div>
-        <div class="form-group">
-          <label>Password:</label>
-          <input type="password" value="password" readonly />
-        </div>
-        <div class="form-group">
-          <label>Email:</label>
-          <input type="email" value="user@mail.com" readonly />
-        </div>
-        <div class="button-group">
-           <router-link to="/edit">
-          <button class="edit-button">Edit Profile</button>
-           </router-link>
-           <router-link to="/">
-          <button class="logout-button">Logout</button>
-           </router-link>
-        </div>
+
+      <div class="form-group">
+        <label class="form-label">Password:</label>
+        <input type="password" class="form-input" value="*********" readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email:</label>
+        <input type="email" class="form-input" value="user@mail.com" readonly />
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "ProfilePage",
-    methods: {
-      goBack() {
-        this.$router.go(-1);
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .profile-page {
-    min-height: 100vh;
-    background-color: #333;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    position: relative;
-    padding: 20px;
+
+    <!-- Buttons -->
+    <div class="button-group">
+      <router-link to="/edit"><button class="btn btn-edit">Edit Profile</button></router-link>
+      <router-link to="/"><button class="btn btn-logout">Logout</button></router-link>
+    </div>
+  </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "ProfilePage",
+};
+</script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.profile-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #4f4f4f;
+  color: white;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.cardheader {
+  position: relative;
+  left: 0;
+  right: 0;
+  width: 100vw; /* gunakan viewport width */
+  max-width: 100vw;
+  height: 76px;
+  background-color: #4f4f4f;
+  padding: 1rem 3rem;
+  margin: 0 auto 2rem auto;
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  opacity: 0.9;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.icon-back {
+  height: 30px;
+  cursor: pointer;
+  padding-bottom: 0rem;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.avatar-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-top: -1rem;
+}
+
+.form-section {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  margin-top: -0.2rem;
+  color: white;
+}
+
+.form-input {
+  background-color: #2f2f2f;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.25rem;
+  color: white;
+  box-shadow: inset 0 0 0 1px #444;
+}
+
+.form-input[readonly] {
+  cursor: default;
+}
+
+.button-group {
+  margin-top: 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  margin-bottom: 3rem;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-edit {
+  background: linear-gradient(180deg, #00879E 0%, #003038 100%);
+  color: white;
+}
+
+.btn-logout {
+  background: linear-gradient(to right, #f8ac57, #be753e);
+  color: white;
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+  .form-section {
+    width: 90%;
   }
-  
-  .back-button {
-    cursor: pointer;
-  }
-  
-  .back-button img {
-    height: 32px;
-    margin-left: 2rem;
-    margin-top: 0rem;
-  }
-  
-  .profile-content {
-    max-width: 400px;
-    margin: 100px auto 0;
+
+  .btn {
+    width: 100%;
     text-align: center;
   }
-  
-  .form-group {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-  
-  .form-group label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #ccc;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background-color: #222;
-    color: white;
-    border-radius: 8px;
-    font-size: 18px;
-  }
-  
+
   .button-group {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1rem;
   }
-  
-  .edit-button,
-  .logout-button {
-    width: 200%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .edit-button {
-    background: linear-gradient(90deg, #00879E 0%, #005B6B 100%);
-    color: white;
-  }
-  
-  .logout-button {
-    background: linear-gradient(90deg, #FFA726 0%, #FB8C00 100%);
-    color: white;
-  }
-  
-  .edit-button:hover,
-  .logout-button:hover {
-    opacity: 0.9;
-  }
-  </style>
+}
+</style>
+
   
