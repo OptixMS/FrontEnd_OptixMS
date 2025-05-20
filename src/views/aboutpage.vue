@@ -24,21 +24,36 @@
         <div class="progress-item">
           <p class="progress-label">Kabel darat</p>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: 42%">1.320,15 km</div>
+            <div
+              class="progress-bar-fill"
+              :style="animate ? 'width: 42%' : 'width: 0%'"
+              >
+            1.320,15 km
+            </div>
           </div>
         </div>
 
         <div class="progress-item">
           <p class="progress-label">Kabel laut</p>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: 58%">1.823,51 km</div>
+            <div
+              class="progress-bar-fill"
+              :style="animate ? 'width: 58%' : 'width: 0%'"
+              >
+              1.823,51 km
+            </div>
           </div>
         </div>
 
         <div class="progress-item">
           <p class="progress-label">Total panjang kabel</p>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: 99%">3.143,66 km</div>
+            <div
+              class="progress-bar-fill"
+              :style="animate ? 'width: 99%' : 'width: 0%'"
+            >
+              3.143,66 km
+            </div>
           </div>
         </div>
       </div>
@@ -49,6 +64,17 @@
 <script>
 export default {
   name: "AboutPage",
+  data() {
+    return {
+      animate: false
+    };
+  },
+  mounted() {
+    // Trigger animation when component is mounted
+    setTimeout(() => {
+      this.animate = true;
+    }, 300); // Delay sedikit agar smooth
+  }
 };
 </script>
 
@@ -82,7 +108,7 @@ export default {
   background-color: #4f4f4f;
   padding: 1rem 3rem;
   margin: 0 auto 2rem auto;
-  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  border-bottom: 2px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
   opacity: 0.9;
 
   display: flex;
@@ -171,6 +197,7 @@ export default {
   padding-right: 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
+  transition: width 1.8s ease-in-out; /* ANIMASI */
 }
 
 /* Responsiveness on wide screens */

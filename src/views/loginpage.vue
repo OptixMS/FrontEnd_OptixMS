@@ -1,7 +1,7 @@
 <template>
     <div class="login-page-container font-poppins">
       <!-- Icon Back -->
-      <router-link to="/login" class="back-button">
+      <router-link to="/" class="back-button">
         <img src="@/assets/img/back.png" alt="Back" class="sizeback" />
       </router-link>
   
@@ -15,84 +15,66 @@
         <!-- Card Form Login -->
         <div class="form-section relative z-10">
           <div class="form-wrapper mx-auto">
-            <h2 class="form-title">Forgot Password</h2>
+            <h2 class="form-title">Login</h2>
             <form @submit.prevent="handleLogin" class="space-y-6">
               <div>
-                <label class="form-label">Email</label>
+                <label class="form-label">Username</label>
                 <input
-                  v-model="Email"
+                  v-model="username"
                   type="text"
-                  placeholder="Enter email"
+                  placeholder="Enter username"
                   class="input-field"
                 />
               </div>
-              <button type="submit" class="login-button">Submit</button>
-              <p v-if="message" class="info-message">{{ message }}</p>
-              <router-link to="/login"><button type="submit" class="login-button">Back to login</button></router-link>
+              <div>
+                <label class="form-label">Password</label>
+                <input
+                  v-model="password"
+                  type="password"
+                  placeholder="Enter password"
+                  class="input-field"
+                />
+              </div>
+              <router-link to="/dashboard"><button type="submit" class="login-button">Login</button></router-link>
             </form>
+            <div class="action-links text-sm text-white">
+              <router-link to="/register" class="create">Create an account</router-link>
+              <router-link to="/forgot" class="forgot">Forgot Password?</router-link>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </template>
   
-  <script>
-import axios from 'axios'
+  <script setup>
+  import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import axios from 'axios'
 
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      error: '',
-      email: '',
-      message: ''
+  const username = ref('')
+  const password = ref('')
+  const error = ref('')
+  const router = useRouter()
+
+  const handleLogin = async () => {
+  error.value = ''
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
+      username: username.value,
+      password: password.value
+    })
+    if (response.data.success) {
+      localStorage.setItem('username', response.data.username)
+      router.push(`/dashboard/${response.data.username}`)
+    } else {
+      error.value = response.data.message || 'Login gagal.'
     }
-  },
-  methods: {
-    async handleLogin() {
-      this.error = ''
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
-          username: this.username,
-          password: this.password
-        })
-        if (response.data.success) {
-          localStorage.setItem('username', response.data.username)
-          this.$router.push(`/dashboard/${response.data.username}`)
-        } else {
-          this.error = response.data.message || 'Login gagal.'
-        }
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Gagal terhubung ke server.'
-      }
-    },
-    async submitForgot() {
-      if (!this.email) {
-        this.message = "Email tidak boleh kosong."
-        return
-      }
-
-      try {
-        const res = await fetch('http://localhost:5001/api/forgotpassword', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: this.email })
-        })
-
-        const data = await res.json()
-        this.message = data.success
-          ? "Link reset password berhasil dikirim ke email Anda."
-          : data.message || "Gagal mengirim email."
-      } catch (err) {
-        console.error(err)
-        this.message = "Terjadi kesalahan saat menghubungi server."
-      }
-    }
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Gagal terhubung ke server.'
   }
-}
-</script>
-
+  }
+  </script>
   
   <style scoped>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
@@ -198,12 +180,12 @@ export default {
 
 .form-title {
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.875rem;
   font-weight: 600;
   margin-bottom: 2rem;
   margin-top: -20px;
-  margin-left: 235px;
-  text-align: left;
+  margin-left: 330px;
+  text-align: center;
 }
 
 .form-label {

@@ -7,9 +7,6 @@
     </div>
   
       <div class="profile-content">
-        <div class="avatar">
-          <img :src="previewImage || defaultAvatar" alt="Avatar" />
-        </div>
   
         <div class="form-group">
           <label>Name:</label>
@@ -29,66 +26,104 @@
         <div class="button-group">
           <button class="submit-button" @click="submitProfile">Submit edit profile</button>
         </div>
+
+        <p v-if="message" class="message">{{ message }}</p>
       </div>
     </div>
   </template>
   
   <script>
-  export default {
-    name: "EditProfilePage",
-    data() {
-      return {
-        name: "User-user",
-        password: "********",
-        email: "user@mail.com",
-        previewImage: null,
-        defaultAvatar: "https://via.placeholder.com/80?text=Avatar", // Avatar dummy kalau belum upload
-      };
-    },
-    methods: {
-      goBack() {
-        this.$router.go(-1);
-      },
-      onFileChange(event) {
-        const file = event.target.files[0];
-        if (file) {
-          this.previewImage = URL.createObjectURL(file);
+import axios from 'axios'
+
+export default {
+  name: "EditProfilePage",
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: '',
+      message: '',
+      previewImage: null,
+      defaultAvatar: '/default-avatar.png',
+      oldUsername: localStorage.getItem('username')
+    };
+  },
+  mounted() {
+    axios.get(`http://localhost:5001/api/account/${this.oldUsername}`)
+      .then(res => {
+        if (res.data.success) {
+          this.name = res.data.data.username
+          this.email = res.data.data.email
         }
-      },
-      submitProfile() {
-        console.log("Profile updated:", {
-          name: this.name,
-          password: this.password,
-          email: this.email,
-        });
-        alert("Profile successfully updated!");
-      },
+      })
+      .catch(err => {
+        console.error(err)
+        this.message = 'Gagal memuat data akun.'
+      })
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1)
     },
-  };
-  </script>
+    onFileChange(event) {
+      const file = event.target.files[0]
+      if (file) {
+        this.previewImage = URL.createObjectURL(file)
+      }
+    },
+    async submitProfile() {
+      console.log("Submit diklik")
+      if (!this.name || !this.email || !this.password) {
+        this.message = "Semua kolom wajib diisi."
+        return
+      }
+
+      try {
+        const res = await axios.put(`http://localhost:5001/api/account/${this.oldUsername}`, {
+          newUsername: this.name,
+          newEmail: this.email,
+          newPassword: this.password
+        })
+
+        if (res.data.success) {
+          localStorage.setItem('username', this.name)
+          this.message = "Edit profile berhasil."
+          setTimeout(() => {
+            window.location.href = `/dashboard/${this.name}`
+          }, 1000)
+        } else {
+          this.message = res.data.message || "Gagal memperbarui profil."
+        }
+      } catch (err) {
+        console.error(err)
+        this.message = err.response?.data?.message || "Terjadi kesalahan saat mengirim data."
+      }
+    }
+  }
+}
+</script>
+
   
   <style scoped>
   .edit-profile-page {
-    min-height: 100vh;
-    background-color: #4f4f4f;
-    color: rgb(0, 0, 0);
-    font-family: 'Poppins', sans-serif;
-    padding: 20px;
-    position: relative;
-    overflow-x: hidden;
+  min-height: 100vh;
+  background-color: #4f4f4f;
+  color: rgb(0, 0, 0);
+  font-family: 'Poppins', sans-serif;
+  padding: 0; /* ubah dari 20px jadi 0 */
+  position: relative;
+  overflow-x: hidden;
   }
 
   .cardheader {
-  position: relative;
+  position: absolute; /* ubah dari relative */
+  top: 0;
   left: 0;
-  right: 0;
-  width: 100vw; /* gunakan viewport width */
-  max-width: 100vw;
+  width: 100%;
   height: 76px;
   background-color: #4f4f4f;
   padding: 1rem 3rem;
-  margin: 0 auto 2rem auto;
-  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9);
   opacity: 0.9;
 
   display: flex;
@@ -96,7 +131,8 @@
   align-items: center;
   justify-content: flex-start;
   box-sizing: border-box;
-}
+  }
+
 
 .icon-back {
   height: 30px;
@@ -118,10 +154,11 @@
   }
   
   .profile-content {
-    max-width: 400px;
-    margin: 80px auto 0;
-    text-align: center;
+  max-width: 400px;
+  margin: 150px auto 0; /* dari 80px → 100px utk ngasih spasi header */
+  text-align: center;
   }
+
   
   .avatar img {
     width: 80px;
@@ -168,7 +205,7 @@
   }
   
   .submit-button {
-    width: 100%;
+    width: 105%;
     padding: 12px;
     border: none;
     border-radius: 12px;

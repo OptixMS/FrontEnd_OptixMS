@@ -45,6 +45,7 @@
           <router-link to="/login"><p class="text-center text-sm text-white mt-4">
             Already have an account?
           </p></router-link>
+          <div v-if="error" class="text-center text-red-300 mt-2 text-sm">{{ error }}</div>
         </div>
       </div>
 
@@ -56,35 +57,42 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+<script>
 import axios from 'axios'
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const router = useRouter()
-
-const handleRegister = async () => {
-  error.value = ''
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
-      username: username.value,
-      email: email.value,
-      password: password.value
-    })
-    if (response.data.success) {
-      router.push('/login')
-    } else {
-      error.value = response.data.message || 'Registrasi gagal.'
+export default {
+  name: "RegisterPage",
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+      error: ''
     }
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Gagal terhubung ke server.'
+  },
+  methods: {
+    async handleRegister() {
+      this.error = ''
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        })
+
+        if (response.data.success) {
+          this.$router.push('/login')
+        } else {
+          this.error = response.data.message || 'Registrasi gagal.'
+        }
+      } catch (err) {
+        this.error = err.response?.data?.message || 'Gagal terhubung ke server.'
+      }
+    }
   }
 }
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');

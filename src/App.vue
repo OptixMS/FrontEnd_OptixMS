@@ -14,5 +14,7 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #000000;
+  overflow-x: hidden;
+  overflow-y: auto;  /* hanya satu scroll */
 }
 </style>

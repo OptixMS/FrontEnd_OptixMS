@@ -1,5 +1,5 @@
 <template>
-  <div class="predict-page font-poppins">
+  <div class="predict-page font-poppins text-white bg-[#3e3e3e] min-h-screen p-8">
     <!-- Header -->
     <div class="cardheader">
       <router-link to="/dashboard">
@@ -16,29 +16,29 @@
       <div class="card">
         <h2 class="card-titlesv">Severity Result</h2>
         <div class="gauge-chart">
-           <GaugeChart :value="3" />
-      <p>Result of severity is</p>
-      <p class="severity-label">Major</p>
+          <GaugeChart v-if="severity !== null" :value="severity" />
+          <p>Result of severity is</p>
+          <p class="severity-label">{{ severityLabel }}</p>
+        </div>
       </div>
-    </div>
 
       <!-- Location Result -->
       <div class="card">
         <h2 class="card-title">Location Result</h2>
-        <img src="@/assets/img/mapsres.png" alt="Map" class="map-img" />
-        <p class="location-label">Manado</p>
+        <img v-if="mapImage" :src="mapImage" alt="Map" class="map-img" />
+        <p class="location-label">{{ location }}</p>
       </div>
     </div>
 
-    <!-- Bottom Grid Info -->
+    <!-- Bottom Info -->
     <div class="bottom-grid">
       <div class="cardbottom">
         <h2 class="bottom-title">Predict Date</h2>
-        <p class="bottom-value">15 May 2025</p>
+        <p class="bottom-value">{{ predictDate }}</p>
       </div>
       <div class="cardbottom">
         <h2 class="bottom-title">Alarm ID Result</h2>
-        <p class="bottom-value">Relay Alarm Minor</p>
+        <p class="bottom-value">{{ alarmId }}</p>
       </div>
     </div>
 
@@ -46,30 +46,61 @@
     <div class="export-container">
       <button class="export-button">Export All Result</button>
     </div>
+
+    <!-- Tabel Hasil -->
+    <h1 class="text-3xl font-bold mt-12 mb-6">Prediction Result Table</h1>
+    <div v-if="rows.length > 0">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-700">
+            <th class="p-3 border border-gray-600">#</th>
+            <th class="p-3 border border-gray-600">Severity</th>
+            <th class="p-3 border border-gray-600">Location</th>
+            <th class="p-3 border border-gray-600">Alarm ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, index) in rows" :key="index" class="bg-gray-800 hover:bg-gray-700">
+            <td class="p-3 border border-gray-700">{{ index + 1 }}</td>
+            <td class="p-3 border border-gray-700">{{ row.Severity }}</td>
+            <td class="p-3 border border-gray-700">{{ row.Location }}</td>
+            <td class="p-3 border border-gray-700">{{ row['Alarm ID'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else class="text-center mt-10 text-red-400">
+      Tidak ada hasil prediksi ditemukan.
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import GaugeChart from '@/components/GaugeChart.vue'
 
-const severity = ref(0)
+const severity = ref(null)
 const severityLabel = ref('')
 const location = ref('')
 const predictDate = ref('')
 const alarmId = ref('')
+const rows = ref([])
+
+const mapImage = computed(() => {
+  if (!location.value) return ''
+  return new URL(`@/assets/maps/${location.value}.png`, import.meta.url).href
+})
 
 const route = useRoute()
 
-// Dapatkan data hasil prediksi
 onMounted(async () => {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/predict/latest`)
     const data = response.data
 
-    severity.value = data.severity // asumsi angka 0–3
+    severity.value = data.severity
     severityLabel.value = mapSeverity(data.severity)
     location.value = data.location
     predictDate.value = data.date
@@ -77,13 +108,23 @@ onMounted(async () => {
   } catch (err) {
     console.error('Gagal ambil data prediksi:', err)
   }
+
+  const stored = localStorage.getItem('predictionResults')
+  if (stored) {
+    try {
+      rows.value = JSON.parse(stored)
+    } catch (err) {
+      console.error('Gagal parse hasil prediksi:', err)
+    }
+  }
 })
 
 function mapSeverity(val) {
-  return ['Minor', 'Major', 'Warning', 'Critical'][val] || 'Unknown'
+  const severityMap = ['Minor', 'Major', 'Warning', 'Critical']
+  const idx = parseInt(val)
+  return severityMap[idx] || 'Unknown'
 }
 </script>
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
@@ -110,7 +151,7 @@ function mapSeverity(val) {
   width: calc(100% + 10vw); /* 8vw untuk mengimbangi padding kiri + kanan parent */
   margin-left: -4vw; /* kompensasi padding parent agar sejajar kiri */
   margin-right: -4vw; /* opsional: kalau butuh konsisten ke kanan */
-  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  border-bottom: 2px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
   margin-bottom: 2rem;
   opacity: 0.9;
 

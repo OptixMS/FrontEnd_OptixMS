@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Import komponen
 import LandingPage from '@/views/landingpage.vue'
-import Login from '@/views/loginpages.vue'
+import Login from '@/views/loginpage.vue'
 import Register from '@/views/registerpage.vue'
 import Dashboard from '@/views/dashboardpage.vue'
 import Temperature from '@/views/temperaturepage.vue'
@@ -16,6 +16,7 @@ import Predict from '@/views/predictpage.vue'
 import Profile from '@/views/profile.vue'
 import Edit from '@/views/editprofile.vue'
 import Forgot from '@/views/forgotpass.vue'
+import Reset from '@/views/resetpass.vue'
 
 const routes = [
   {
@@ -82,6 +83,11 @@ const routes = [
     path: '/forgot',
     name: 'Forgot',
     component: Forgot
+  },
+  {
+    path: '/reset',
+    name: 'Reset',
+    component: Reset
   }
 ]
 
