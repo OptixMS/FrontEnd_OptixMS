@@ -17,6 +17,7 @@
             v-for="(entry, index) in historyData"
             :key="index"
             class="table-row"
+            @click="selectHistory(entry)"
           >
             <span class="col-number">{{ index + 1 }}</span>
             <span class="col-date">{{ entry.date }}</span>
@@ -29,7 +30,15 @@
       <div class="side-panel">
         <button class="action-button">Delete all history</button>
         <button class="action-button">Export History</button>
-        <div class="placeholder-box"></div>
+        <div class="placeholder-box">
+        <div v-if="selectedHistory">
+          <p><strong>Date:</strong> {{ selectedHistory.date }}</p>
+          <p><strong>Severity:</strong> {{ selectedHistory.severity }}</p>
+        </div>
+        <div v-else style="opacity: 0.5; font-style: italic;">
+          Click on a row to preview history.
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -40,15 +49,27 @@ export default {
   name: "HistoryPage",
   data() {
     return {
-      historyData: [
-        { date: "01 March 2025", severity: "Critical.5" },
-        { date: "28 February 2025", severity: "Minor.20" },
-        { date: "27 February 2025", severity: "Mayor.10" },
-        { date: "26 February 2025", severity: "Warning.15" },
-        { date: "25 February 2025", severity: "Mayor.13" },
-      ],
+      historyData: [],             // siap diisi backend
+      selectedHistory: null,
     };
   },
+  methods: {
+    selectHistory(entry) {
+      this.selectedHistory = entry;
+    },
+
+    // Siap dipakai backend
+    async fetchHistory() {
+      // Tim backend bisa isi ini nanti
+      // Contoh request backend disiapkan, tapi belum aktif:
+      // const res = await axios.get('/api/history');
+      // this.historyData = res.data.rows;
+    }
+  },
+  mounted() {
+    // fetchHistory dipanggil saat siap
+    this.fetchHistory();
+  }
 };
 </script>
 
@@ -137,6 +158,12 @@ export default {
   padding-bottom: 0.5rem;
   font-size: 1rem;
   margin-bottom: 1.7rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.table-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .col-number {
@@ -182,6 +209,10 @@ export default {
 .placeholder-box {
   border: 1px solid white;
   border-radius: 0.5rem;
-  height: 18rem;
+  height: 15.5rem;
+  color: white; /* ✅ tambahkan ini */
+  padding: 1rem; /* opsional biar teks tidak mepet */
+  font-size: 0.95rem; /* opsional agar lebih rapi */
 }
+
 </style>

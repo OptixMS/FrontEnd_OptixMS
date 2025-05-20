@@ -41,10 +41,47 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "ProfilePage",
-};
+  data() {
+    return {
+      userData: {
+        username: '',
+        email: ''
+      }
+    }
+  },
+  mounted() {
+    const username = localStorage.getItem('username')
+    if (!username) {
+      this.$router.push('/login')
+      return
+    }
+
+    axios.get(`${import.meta.env.VITE_API_URL}/api/account/${username}`)
+      .then(res => {
+        if (res.data.success) {
+          this.userData = res.data.data
+        }
+      })
+      .catch(err => {
+        console.error('Gagal mengambil data user:', err)
+      })
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1)
+    },
+    logout() {
+      localStorage.removeItem('username')
+      this.$router.push('/')
+    }
+  }
+}
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
