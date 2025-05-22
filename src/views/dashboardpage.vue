@@ -36,33 +36,39 @@
         </div>
 
         <div
-        class="cardpredict" 
-        style="background: linear-gradient(90deg, #00697C 0%, #FFAB5B 100%);"
+          class="cardpredict" 
+          style="background: linear-gradient(90deg, #00697C 0%, #FFAB5B 100%);"
         >
-      <div class="flex flex-row items-center justify-between w-full p-4 gap-6">
+        <div class="predict-container">
     
-      <!-- Kiri: Input File + Input Date -->
-      <div class="flex flex-col gap-4 w-2/3">
-      
+          <!-- Kiri: Input File + Input Date -->
+          <div class="form-left">
             <!-- Upload File -->
             <div class="form-group">
-                <label for="file" class="floating-label">Input File</label>
-                <input id="file" type="file" class="custom-input input-file" />
+              <label for="file" class="floating-label">Input File</label>
+              <input id="file" type="file" class="custom-input input-file" />
             </div>
 
             <!-- Input Date -->
             <div class="form-group">
-                <label for="date" class="floating-label">Input Date</label>
-                <input id="date" type="date" class="custom-input input-date" />
+              <input
+                id="date"
+                type="date"
+                class="custom-input input-date"
+                :min="minDate"
+                :max="maxDate"
+              />
+              <label for="date" class="floating-label">Input Date</label>
             </div>
-            </div>
+          </div>
 
-            <!-- Kanan: Button Predict -->
-            <div class>
+          <!-- Kanan: Button Predict -->
+          <div class="form-right">
             <button @click="goToPredict" class="predict-button cursor-pointer">
               Predict Now
             </button>
           </div>
+
         </div>
       </div>
     </div>
@@ -71,7 +77,7 @@
       <!-- Kolom Kanan -->
       <div class="dashboard-column">
         <div @click="goToAbout" class="card cardabout cursor-pointer">
-          <h2 class="card-titleabout">About Palapa Ring</h2>
+          <h2 class="card-titleabout">About & Credit</h2>
           <img src="@/assets/img/aboutLogo.png" alt="About" class="size" />
         </div>
 
@@ -93,6 +99,9 @@ const selectedDate = ref('')
 const selectedFile = ref(null)
 const showWave = ref(false)
 const router = useRouter()
+const today = new Date()
+const tomorrow = new Date()
+tomorrow.setDate(today.getDate() + 1)
 
 onMounted(() => {
   username.value = localStorage.getItem('username') || 'User'
@@ -102,6 +111,16 @@ onMounted(() => {
 const handleFileChange = (event) => {
   selectedFile.value = event.target.files[0]
 }
+
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const minDate = formatDate(today)
+const maxDate = formatDate(tomorrow)
 
 const handlePredict = async () => {
   if (!selectedFile.value || !selectedDate.value) {
@@ -257,7 +276,7 @@ const goToPredict = () => router.push('/predict')
 }
 
 .card h2 {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: white;
   margin: 0;
@@ -277,6 +296,7 @@ const goToPredict = () => router.push('/predict')
   justify-content: center;
   align-items: center;
 }
+
 
 .cardwelcome h2,
 .cardmaps h2 {
@@ -324,6 +344,25 @@ const goToPredict = () => router.push('/predict')
   box-sizing: border-box;
 }
 
+.form-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 66%;
+}
+
+.form-right {
+  align-self: flex-start;
+}
+
+.predict-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  width: 100%;
+}
+
 
 .cardpredict .flex {
   flex-wrap: wrap;
@@ -358,7 +397,7 @@ const goToPredict = () => router.push('/predict')
 .card-title-welcome {
   text-align: center;
   margin: 0 auto;
-  font-size: 50px;
+  font-size: 23.5px !important; 
   font-weight: 600;
 }
 
@@ -388,6 +427,12 @@ const goToPredict = () => router.push('/predict')
   margin-bottom: 1rem; /* ✅ Tambah jarak bawah */
 }
 
+.predict-button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start; /* ⬅️ ini penting biar tombol naik ke atas */
+  width: 100%;
+}
 
 .predict-button {
   background-color: #2f2f2f;
@@ -398,6 +443,7 @@ const goToPredict = () => router.push('/predict')
   border: none;
   cursor: pointer;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  margin-top: 10px;
 }
 
 .form-group {
@@ -433,6 +479,14 @@ const goToPredict = () => router.push('/predict')
 
 .input-date::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+
+.input-date {
+  background-color: #2f2f2f;
+  color: white;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: none;
 }
 
 @media (max-width: 768px) {
