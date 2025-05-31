@@ -16,7 +16,7 @@
         <div class="form-section relative z-10">
           <div class="form-wrapper mx-auto">
             <h2 class="form-title">Login</h2>
-            <form @submit.prevent="handleLogin" class="space-y-6">
+            <form @submit.prevent="login" class="space-y-6">
               <div>
                 <label class="form-label">Username</label>
                 <input
@@ -35,12 +35,13 @@
                   class="input-field"
                 />
               </div>
-              <router-link to="/dashboard"><button type="submit" class="login-button">Login</button></router-link>
+              <button type="submit" class="login-button">Login</button>
             </form>
             <div class="action-links text-sm text-white">
               <router-link to="/register" class="create">Create an account</router-link>
               <router-link to="/forgot" class="forgot">Forgot Password?</router-link>
             </div>
+            <p v-if="error" class="error-message">{{ error }}</p>
           </div>
         </div>
       </div>
@@ -48,32 +49,47 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
-  import axios from 'axios'
-
-  const username = ref('')
-  const password = ref('')
-  const error = ref('')
-  const router = useRouter()
-
-  const handleLogin = async () => {
-  error.value = ''
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
-      username: username.value,
-      password: password.value
-    })
-    if (response.data.success) {
-      localStorage.setItem('username', response.data.username)
-      router.push(`/dashboard/${response.data.username}`)
-    } else {
-      error.value = response.data.message || 'Login gagal.'
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { postRequest } from '../api.js';
+  
+  const router = useRouter();
+  const username = ref('');
+  const password = ref(''); // Perbaikan sebelumnya: hapus .value di sini
+  const error = ref('');
+  
+  const login = async () => {
+    error.value = '';
+    try {
+      const data = await postRequest('/api/login', {
+        username: username.value,
+        password: password.value,
+      });
+  
+      // Jika `postRequest` tidak melempar error, berarti responsnya 2xx (sukses)
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        router.push('/dashboard');
+      } else {
+        // Ini sebenarnya tidak akan terpanggil jika !res.ok di api.js sudah melempar error
+        // Tapi untuk jaga-jaga jika ada kasus 2xx tapi success: false dari backend
+        error.value = data.message || 'Login gagal (respons sukses tapi logika gagal).';
+      }
+    } catch (err) {
+      // err sekarang bisa berisi { status, message } dari api.js,
+      // atau objek error standar jika ada masalah jaringan.
+      if (err.status) {
+        // Error dari server (misalnya 401 Unauthorized, 400 Bad Request)
+        error.value = err.message;
+        console.error('Login error from server:', err.status, err.message);
+      } else {
+        // Masalah koneksi jaringan atau error lain saat menyiapkan request
+        error.value = 'Gagal koneksi ke server atau terjadi kesalahan jaringan.';
+        console.error('Login network/preparation error:', err);
+      }
     }
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Gagal terhubung ke server.'
-  }
-  }
+  };
   </script>
   
   <style scoped>
@@ -225,6 +241,13 @@
   margin-top: 1rem;
   margin-left: 240px;
 }
+
+.error-message {
+  color: red;
+  margin-left: 240px;
+  margin-top: 0.5rem;
+}
+
 
 .login-button:hover {
   opacity: 0.9;

@@ -32,76 +32,151 @@
     </div>
   </template>
   
-  <script>
-import axios from 'axios'
+  <script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  name: "EditProfilePage",
-  data() {
-    return {
-      name: '',
-      email: '',
-      password: '',
-      message: '',
-      previewImage: null,
-      defaultAvatar: '/default-avatar.png',
-      oldUsername: localStorage.getItem('username')
-    };
-  },
-  mounted() {
-    axios.get(`http://localhost:5001/api/account/${this.oldUsername}`)
-      .then(res => {
-        if (res.data.success) {
-          this.name = res.data.data.username
-          this.email = res.data.data.email
-        }
-      })
-      .catch(err => {
-        console.error(err)
-        this.message = 'Gagal memuat data akun.'
-      })
-  },
-  methods: {
-    goBack() {
-      this.$router.go(-1)
-    },
-    onFileChange(event) {
-      const file = event.target.files[0]
-      if (file) {
-        this.previewImage = URL.createObjectURL(file)
-      }
-    },
-    async submitProfile() {
-      console.log("Submit diklik")
-      if (!this.name || !this.email || !this.password) {
-        this.message = "Semua kolom wajib diisi."
-        return
-      }
+const router = useRouter();
 
-      try {
-        const res = await axios.put(`http://localhost:5001/api/account/${this.oldUsername}`, {
-          newUsername: this.name,
-          newEmail: this.email,
-          newPassword: this.password
-        })
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const message = ref('');
+const messageClass = ref('');
+const loading = ref(false);
+const initialError = ref('');
+const oldUsername = ref(localStorage.getItem('username')); // Gunakan ref
 
-        if (res.data.success) {
-          localStorage.setItem('username', this.name)
-          this.message = "Edit profile berhasil."
-          setTimeout(() => {
-            window.location.href = `/dashboard/${this.name}`
-          }, 1000)
-        } else {
-          this.message = res.data.message || "Gagal memperbarui profil."
-        }
-      } catch (err) {
-        console.error(err)
-        this.message = err.response?.data?.message || "Terjadi kesalahan saat mengirim data."
-      }
+// URL dasar API Anda
+const baseUrl = import.meta.env.VITE_API_URL;
+
+// Fungsi untuk mengambil data profil (GET request)
+async function fetchEditProfileData() {
+  loading.value = true;
+  initialError.value = '';
+
+  const token = localStorage.getItem('token');
+  
+  if (!oldUsername.value || !token) {
+    initialError.value = 'Anda belum login atau sesi habis. Mengarahkan ke halaman login...';
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 1500);
+    loading.value = false;
+    return;
+  }
+
+  try {
+    // Menggunakan fetch API untuk GET request
+    const res = await fetch(`${baseUrl}/api/account/editprofile/${oldUsername.value}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' // Tambahkan ini meskipun GET
+      },
+    });
+
+    // Periksa status respons
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw { status: res.status, message: errorData.message || 'Gagal memuat data profil dari server.' };
     }
+
+    const data = await res.json();
+
+    if (data.success) {
+      name.value = data.data.username;
+      email.value = data.data.email;
+      // Password tidak diisi dari GET request untuk keamanan
+    } else {
+      throw { message: data.message || 'Gagal memuat data profil. Respons sukses tapi data tidak valid.' };
+    }
+  } catch (err) {
+    console.error('Error fetching edit profile data:', err);
+    if (err.status) {
+      initialError.value = err.message;
+      if (err.status === 401 || err.status === 403) {
+        initialError.value = 'Sesi Anda tidak valid. Mengarahkan ke halaman login...';
+        setTimeout(() => {
+          router.push('/edit');
+        }, 1500);
+      }
+    } else {
+      initialError.value = 'Terjadi kesalahan jaringan. Mohon periksa koneksi Anda.';
+    }
+  } finally {
+    loading.value = false;
   }
 }
-</script>
+
+// Fungsi untuk submit perubahan profil (PUT request)
+async function submitProfile() {
+  message.value = '';
+  messageClass.value = '';
+
+  if (!name.value || !email.value || !password.value) {
+    message.value = "Semua kolom wajib diisi.";
+    messageClass.value = 'error-message';
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+
+  try {
+    // Menggunakan fetch API untuk PUT request
+    const res = await fetch(`${baseUrl}/api/editprofile/${oldUsername.value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        newUsername: name.value,
+        newEmail: email.value,
+        newPassword: password.value
+      }),
+    });
+
+    // Periksa status respons
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw { status: res.status, message: errorData.message || 'Gagal memperbarui profil dari server.' };
+    }
+
+    const data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem('username', name.value); // Perbarui username di localStorage
+      message.value = "Edit profile berhasil.";
+      messageClass.value = 'success-message';
+      setTimeout(() => {
+        router.push('/profile'); // Redirect ke halaman profil setelah update
+      }, 1500);
+    } else {
+      throw { message: data.message || 'Gagal memperbarui profil. Respons sukses tapi data tidak valid.' };
+    }
+  } catch (err) {
+    console.error('Error submitting profile:', err);
+    if (err.status) {
+      message.value = err.message;
+      if (err.status === 401 || err.status === 403) {
+        message.value = 'Sesi Anda tidak valid. Mengarahkan ke halaman login...';
+        setTimeout(() => {
+          router.push('/edit');
+        }, 1500);
+      }
+    } else {
+      message.value = 'Terjadi kesalahan jaringan. Mohon periksa koneksi Anda.';
+    }
+    messageClass.value = 'error-message';
+  }
+}
+
+    onMounted(() => {
+      fetchEditProfileData();
+    });
+    </script>
+
 
   
   <style scoped>

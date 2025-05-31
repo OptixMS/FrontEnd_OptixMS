@@ -7,7 +7,7 @@
     <div class="overlay">
       <!-- Header -->
       <div class="header">
-        <img src="@/assets/img/logo.png" alt="OptixMS Logo" class="logo" />
+        <img src="@/assets/img/optimsnew.png" alt="OptixMS Logo" class="logo" />
         <div class="auth-buttons">
            <router-link to="/register" class="btn">Sign Up</router-link>
            <router-link to="/login" class="btn">Login</router-link>

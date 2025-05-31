@@ -1,87 +1,176 @@
 <template>
   <div class="profile-container font-poppins">
-    <!-- Header -->
     <div class="cardheader">
       <router-link to="/dashboard">
         <img src="@/assets/img/back.png" alt="Back" class="icon-back" />
       </router-link>
     </div>
 
-    <!-- Profile Icon -->
     <div class="content-wrapper">
       <div class="avatar-wrapper">
-      <img src="@/assets/img/profilenew.png" alt="Profile Icon" class="profile-icon" />
-    </div>
-
-    <!-- Form Fields -->
-    <div class="form-section">
-      <div class="form-group">
-        <label class="form-label">Name:</label>
-        <input type="text" class="form-input" value="User-user" readonly />
+        <img src="@/assets/img/profils.png" alt="Profile Icon" class="profile-icon" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Password:</label>
-        <input type="password" class="form-input" value="*********" readonly />
+      <div v-if="loading" class="info-message">Memuat data profil...</div>
+      <div v-if="error" class="error-message">{{ error }}</div>
+
+      <div v-if="!loading && !error" class="form-section">
+        <div class="form-group">
+          <label class="form-label">Name:</label>
+          <input type="text" class="form-input" :value="userData.username" readonly />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password:</label>
+          <input type="password" class="form-input" value="*********" readonly />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email:</label>
+          <input type="email" class="form-input" :value="userData.email" readonly />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Email:</label>
-        <input type="email" class="form-input" value="user@mail.com" readonly />
-      </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class="button-group">
-      <router-link to="/edit"><button class="btn btn-edit">Edit Profile</button></router-link>
-      <router-link to="/"><button class="btn btn-logout">Logout</button></router-link>
-    </div>
-  </div>
+      <div class="button-group">
+        <router-link to="/edit"><button class="btn btn-edit">Edit Profile</button></router-link>
+        <button class="btn btn-logout" @click="logout">Logout</button> </div>
+      <p v-if="logoutMessage" :class="logoutMessageClass" class="mt-2 text-center">{{ logoutMessage }}</p> </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios'
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  name: "ProfilePage",
-  data() {
-    return {
-      userData: {
-        username: '',
-        email: ''
-      }
-    }
-  },
-  mounted() {
-    const username = localStorage.getItem('username')
-    if (!username) {
-      this.$router.push('/login')
-      return
-    }
+const userData = ref({ username: '', email: '' });
+const loading = ref(false);
+const error = ref('');
+const logoutMessage = ref(''); // ✅ State untuk pesan logout
+const logoutMessageClass = ref(''); // ✅ State untuk styling pesan logout
+const router = useRouter();
 
-    axios.get(`${import.meta.env.VITE_API_URL}/api/account/${username}`)
-      .then(res => {
-        if (res.data.success) {
-          this.userData = res.data.data
-        }
-      })
-      .catch(err => {
-        console.error('Gagal mengambil data user:', err)
-      })
-  },
-  methods: {
-    goBack() {
-      this.$router.go(-1)
-    },
-    logout() {
-      localStorage.removeItem('username')
-      this.$router.push('/')
+const baseUrl = import.meta.env.VITE_API_URL;
+
+async function fetchProfile() {
+  loading.value = true;
+  error.value = '';
+
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('username');
+
+  if (!token || !username) {
+    error.value = 'Anda belum login. Mengarahkan ke halaman login...';
+    router.push('/login');
+    loading.value = false;
+    return;
+  }
+
+  try {
+    // Pastikan URL endpoint sesuai dengan struktur backend Anda: /api/account/profile/:username
+    // Perhatikan: endpoint Anda di account.js adalah /profile/:username, jadi base path /api sudah cukup
+    const res = await fetch(`${baseUrl}/api/profile/${username}`, { // ✅ URL disesuaikan
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      userData.value = data.data;
+    } else {
+      error.value = data.message || 'Gagal mengambil data profil. Mohon coba lagi.';
+      router.push('/login'); // Jika API mengindikasikan kesalahan, anggap sesi tidak valid
     }
+  } catch (err) {
+    error.value = 'Terjadi kesalahan jaringan. Mohon periksa koneksi Anda.';
+    console.error('Error fetching profile:', err);
+    router.push('/profile'); // Jika terjadi kesalahan jaringan, arahkan ke login
+  } finally {
+    loading.value = false;
   }
 }
-</script>
 
+// ✅ FUNGSI LOGOUT YANG MEMANGGIL BACKEND
+async function logout() {
+  logoutMessage.value = '';
+  logoutMessageClass.value = '';
+
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('username'); // Ambil username, meskipun endpoint logout tidak pakai
+
+  if (!token || !username) {
+    // Jika tidak ada token, langsung logout dari frontend saja
+    console.warn('Tidak ada token ditemukan, langsung logout lokal.');
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+    router.push('/');
+    return;
+  }
+
+  try {
+    logoutMessage.value = 'Melakukan logout...';
+    logoutMessageClass.value = 'info-message';
+
+    const baseUrl = import.meta.env.VITE_API_URL;
+    const response = await fetch(`${baseUrl}/api/logout`, { // ✅ Endpoint POST /api/logout
+      method: 'POST', // ✅ Metode POST
+      headers: {
+        'Authorization': `Bearer ${token}`, // Mengirim token di header
+        'Content-Type': 'application/json' // Sebagai praktik baik
+      },
+      body: JSON.stringify({}) // Body kosong jika backend tidak mengharapkan data
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      let errorMessage = 'Gagal logout dari server.';
+      if (errorData && errorData.message) {
+          errorMessage = errorData.message;
+      } else if (response.statusText) {
+          errorMessage = response.statusText;
+      }
+      throw { status: response.status, message: errorMessage };
+    }
+
+    const result = await response.json();
+    if (result.success) {
+      logoutMessage.value = 'Logout berhasil!';
+      logoutMessageClass.value = 'success-message';
+    } else {
+      logoutMessage.value = result.message || 'Logout gagal dari server.';
+      logoutMessageClass.value = 'error-message';
+    }
+
+  } catch (err) {
+    console.error('❌ Error saat logout:', err);
+    let displayMessage = 'Terjadi kesalahan jaringan saat logout.';
+    if (err.status) {
+      displayMessage = `Error ${err.status}: ${err.message}`;
+      if (err.status === 401 || err.status === 403) {
+        displayMessage = 'Sesi tidak valid. Melakukan logout lokal.';
+      }
+    } else if (err.message && err.message.includes("Failed to fetch")) {
+      displayMessage = 'Tidak dapat terhubung ke server logout. Melakukan logout lokal.';
+    }
+    logoutMessage.value = displayMessage;
+    logoutMessageClass.value = 'error-message';
+  } finally {
+    // Selalu hapus token dari localStorage dan redirect setelah mencoba logout dari backend
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+    setTimeout(() => {
+      router.push('/'); // Redirect ke halaman utama setelah logout
+    }, 1000); // Beri sedikit waktu untuk pesan terlihat
+  }
+}
+
+onMounted(() => {
+  fetchProfile();
+});
+</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
@@ -105,15 +194,14 @@ export default {
   position: relative;
   left: 0;
   right: 0;
-  width: 100vw; /* gunakan viewport width */
+  width: 100vw;
   max-width: 100vw;
   height: 76px;
   background-color: #4f4f4f;
   padding: 1rem 3rem;
   margin: 0 auto 2rem auto;
-  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9);
   opacity: 0.9;
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -231,6 +319,22 @@ export default {
     gap: 1rem;
   }
 }
-</style>
 
-  
+.info-message {
+  color: #ffffff;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: #f8ac57;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.success-message {
+  color: #ffffff;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+</style>

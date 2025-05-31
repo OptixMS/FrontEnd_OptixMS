@@ -1,94 +1,109 @@
 <template>
-    <div class="login-page-container font-poppins">
-      <!-- Icon Back -->
-      <router-link to="/login" class="back-button">
-        <img src="@/assets/img/back.png" alt="Back" class="sizeback" />
-      </router-link>
-  
-      <!-- Card utama -->
-      <div class="login-card-wrapper relative">
-        <!-- Card ilustrasi: posisi absolute dan menimpa sisi kiri form -->
-        <div class="illustration-card absolute z-20 left-[-140px] top-1/2 -translate-y-1/2">
-          <img src="@/assets/img/SignUpLogin.png" alt="Login Illustration" class="icon" />
-        </div>
-  
-        <!-- Card Form Login -->
-        <div class="form-section relative z-10">
-          <div class="form-wrapper mx-auto">
-            <h2 class="form-title">Forgot Password</h2>
-            <form @submit.prevent="handleLogin" class="space-y-6">
-              <div>
-                <label class="form-label">Email</label>
-                <input
-                  v-model="Email"
-                  type="text"
-                  placeholder="Enter email"
-                  class="input-field"
-                />
-              </div>
-              <button type="submit" class="login-button">Submit</button>
-              <p v-if="message" class="info-message">{{ message }}</p>
-              <router-link to="/login"><button type="submit" class="login-button">Back to login</button></router-link>
+  <div class="login-page-container font-poppins">
+    <router-link to="/login" class="back-button">
+      <img src="@/assets/img/back.png" alt="Back" class="sizeback" />
+    </router-link>
+
+    <div class="login-card-wrapper relative">
+      <div class="illustration-card absolute z-20 left-[-140px] top-1/2 -translate-y-1/2">
+        <img src="@/assets/img/SignUpLogin.png" alt="Login Illustration" class="icon" />
+      </div>
+
+      <div class="form-section relative z-10">
+        <div class="form-wrapper mx-auto">
+          <h2 class="form-title">Forgot Password</h2>
+          <form @submit.prevent="submitForgot" class="space-y-6">
+            <div>
+              <label class="form-label">Email</label>
+              <input
+                v-model="email" 
+                type="email" 
+                placeholder="Enter email"
+                class="input-field"
+              />
+            </div>
+            <button type="submit" class="login-button">Submit</button>
+            
+            <p v-if="loading" class="info-message">Mengirim...</p>
+            <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
             </form>
-          </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
-  <script>
-import axios from 'axios'
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      error: '',
-      email: '',
-      message: ''
+// State reaktif
+const email = ref('');
+const loading = ref(false);
+const successMessage = ref('');
+const errorMessage = ref('');
+
+const router = useRouter();
+
+// URL dasar API Anda
+const baseUrl = import.meta.env.VITE_API_URL;
+
+// Fungsi untuk menangani pengiriman permintaan lupa password
+async function submitForgot() {
+  loading.value = true;
+  successMessage.value = '';
+  errorMessage.value = '';
+
+  if (!email.value) {
+    errorMessage.value = "Email tidak boleh kosong.";
+    loading.value = false;
+    return;
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/api/forgotpassword`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email.value }), // Mengirim nilai email dari input
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      let displayMessage = 'Gagal mengirim email reset password.';
+      if (errorData && errorData.message) {
+        displayMessage = errorData.message;
+      } else if (res.statusText) {
+        displayMessage = res.statusText;
+      }
+      throw { status: res.status, message: displayMessage };
     }
-  },
-  methods: {
-    async handleLogin() {
-      this.error = ''
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
-          username: this.username,
-          password: this.password
-        })
-        if (response.data.success) {
-          localStorage.setItem('username', response.data.username)
-          this.$router.push(`/dashboard/${response.data.username}`)
-        } else {
-          this.error = response.data.message || 'Login gagal.'
-        }
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Gagal terhubung ke server.'
-      }
-    },
-    async submitForgot() {
-      if (!this.email) {
-        this.message = "Email tidak boleh kosong."
-        return
-      }
 
-      try {
-        const res = await fetch('http://localhost:5001/api/forgotpassword', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: this.email })
-        })
+    const data = await res.json();
 
-        const data = await res.json()
-        this.message = data.success
-          ? "Link reset password berhasil dikirim ke email Anda."
-          : data.message || "Gagal mengirim email."
-      } catch (err) {
-        console.error(err)
-        this.message = "Terjadi kesalahan saat menghubungi server."
-      }
+    if (data.success) {
+      successMessage.value = "Berhasil.";
+      email.value = ''; // Kosongkan input email setelah berhasil
+    } else {
+      errorMessage.value = data.message || "Gagal.";
     }
+  } catch (err) {
+    console.error('Error submitForgot:', err);
+    let displayMessage = 'Terjadi kesalahan saat menghubungi server.';
+    if (err.status) {
+      displayMessage = `Error ${err.status}: ${err.message}`;
+      if (err.status === 400 || err.status === 404) { // Menangani Bad Request atau Not Found (Email tidak terdaftar)
+        displayMessage = err.message; // Gunakan pesan dari backend
+      }
+    } else if (err.message && err.message.includes("Failed to fetch")) {
+      displayMessage = 'Terjadi kesalahan jaringan. Mohon periksa koneksi Anda.';
+    }
+    errorMessage.value = displayMessage;
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -228,6 +243,34 @@ export default {
 
 .input-field::placeholder {
   color: #ccc;
+}
+
+.info-message {
+  color: #00879E;
+  margin-top: 1rem;
+  padding-left: 15rem;
+  font-size: 1.1rem;
+}
+
+.success-message {
+  color: #ffffff;
+  margin-top: 1rem;
+  padding-left: 15rem;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: #f8ac57;
+  margin-top: 1rem;
+  padding-left: 15rem;
+  font-size: 1.1rem;
+}
+
+.text-red-400 {
+  color: #f87171; /* Contoh warna merah, sesuaikan */
+}
+.text-green-400 {
+  color: #34d399; /* Contoh warna hijau, sesuaikan */
 }
 
 /* Perbaikan button login: tanpa box-shadow hitam */

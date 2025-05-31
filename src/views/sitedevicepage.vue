@@ -1,10 +1,10 @@
 <template>
+  <div class="site-wrapper">
+    <Sidebar />
+
   <div class="site-device-page font-poppins text-white">
     <!-- Header -->
     <div class="cardheader">
-      <router-link to="/dashboard">
-        <img src="@/assets/img/back.png" alt="Back" class="back-button" />
-      </router-link>
     </div>
 
     <div class="container">
@@ -66,14 +66,19 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
+import Sidebar from '@/components/sidebar.vue';
 import PieChart from "@/components/chart.vue";
 
 export default {
   name: "SiteDevicePage",
-  components: { PieChart },
+  components: { 
+    Sidebar,
+    PieChart
+   },
   data() {
     return {
       deviceTables: [
@@ -106,14 +111,14 @@ export default {
           ]
         },
         {
-          title: "P8 Detail",
+          title: "P8A Detail",
           rows: [
             { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16", location: "Ondong" },
             { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800", location: "Manado, Tobelo, Morotai, & Tahuna" }
           ]
         },
         {
-          title: "P8A Detail",
+          title: "P8B Detail",
           rows: [
             { device: "Optical Terminal Multiplexer (OTM)", type: "OptiX OSN 9800 U16", location: "Sofifi, Ternate, & Tidore" }
           ]
@@ -131,6 +136,10 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
+.site-wrapper {
+  display: flex;
+}
+
 .site-device-page {
   background-color: #4f4f4f;
   min-height: 100vh;
@@ -139,6 +148,8 @@ export default {
   color: white;
   overflow-x: hidden;
   padding: 0 4vw 4rem;
+  margin-left: 64px;
+  width: calc(100% - 64px);
 }
 
 .cardheader {

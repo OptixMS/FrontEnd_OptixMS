@@ -1,10 +1,11 @@
 <template>
+  <div class="about-wrapper">
   <div class="about-container font-poppins">
+    <!-- Sidebar -->
+    <Sidebar />
+
     <!-- Header -->
     <div class="cardheader">
-      <router-link to="/dashboard" class="flex items-center">
-        <img src="@/assets/img/back.png" alt="Back" class="icon-button" />
-      </router-link>
     </div>
 
     <div class="about-card">
@@ -59,58 +60,72 @@
       </div>
     </div>
 
-    <!-- Credit Section -->
-<div class="credit-section">
-  <!-- Deskripsi Proyek -->
-  <p class="credit-description">
-    Website ini dibuat sebagai bagian dari tugas akhir dalam menyelesaikan studi di Universitas Telkom, 
-    bekerja sama dengan PT. LEN Telekomunikasi Indonesia. 
-  </p>
+          <!-- Credit Section -->
+        <div class="credit-section">
+          <div class="credit-inner">
+          <!-- Deskripsi Proyek -->
+        <p class="credit-description">
+          Website ini dibuat sebagai bagian dari tugas akhir dalam menyelesaikan studi di Universitas Telkom, 
+          bekerja sama dengan PT. LEN Telekomunikasi Indonesia. 
+        </p>
 
-  <!-- Logo -->
-  <div class="credit-logos">
-    <img src="@/assets/img/logotelkom.png" alt="Universitas" class="credit-logo" />
-    <img src="@/assets/img/len.png" alt="Perusahaan" class="credit-logo" />
-  </div>
+          <!-- Logo -->
+        <div class="credit-logos">
+          <div class="logo-card">
+            <img src="@/assets/img/logotelkom.png" alt="Universitas" class="credit-logo" />
+          </div>
+          <div class="logo-card">
+            <img src="@/assets/img/len.png" alt="Perusahaan" class="credit-logoi" />
+          </div>
+          <div class="logo-card">
+            <img src="@/assets/img/adaptive.png" alt="Perusahaan" class="credit-logoa" />
+          </div>
+        </div>
 
-  <div class="credit-members-container">
-  <!-- Kiri: Anggota -->
-  <div class="credit-col">
-    <h3>Anggota Kelompok</h3>
-    <ul>
-      <li>Rayhan Aziz Budiana</li>
-      <li>M Nashr Kautsar</li>
-      <li>Raihan Ilham Agusti</li>
-    </ul>
-  </div>
+        <div class="credit-members-container">
+          <!-- Kiri: Anggota -->
+        <div class="credit-col">
+          <h3>Anggota Kelompok</h3>
+          <ul>
+            <li>Rayhan Aziz Budiana (1101213076)</li>
+            <li>M Nashr Kautsar (1101210018)</li>
+            <li>Raihan Ilham Agusti (1101213080)</li>
+          </ul>
+        </div>
 
-  <!-- Kanan: Pembimbing -->
-  <div class="credit-col">
-    <h3>Pembimbing</h3>
-    <ul>
-      <li>Ridha Muldina Negara, S.T, M.T.</li>
-      <li>Rohmat Tulloh, S.T, M.T.</li>
-      <li>Ir. Akhmad Hambali, M.T.</li>
-    </ul>
-  </div>
-</div>
-  </div>
+          <!-- Kanan: Pembimbing -->
+        <div class="credit-col">
+          <h3>Pembimbing</h3>
+          <ul>
+            <li>Ridha Muldina Negara, S.T, M.T.</li>
+            <li>Ir. Akhmad Hambali, M.T.</li>
+            <li>Rohmat Tulloh, S.T, M.T.</li>
+          </ul>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Sidebar from '@/components/sidebar.vue';
+
 export default {
   name: "AboutPage",
+  components: {
+    Sidebar
+  },
   data() {
     return {
       animate: false
     };
   },
   mounted() {
-    // Trigger animation when component is mounted
     setTimeout(() => {
       this.animate = true;
-    }, 300); // Delay sedikit agar smooth
+    }, 300);
   }
 };
 </script>
@@ -122,6 +137,10 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
+.about-wrapper {
+  display: flex;
+}
+
 .about-container {
   min-height: 100vh;
   width: 100%;
@@ -131,6 +150,8 @@ export default {
   overflow-x: hidden;
   padding: 0;
   margin: 0;
+  margin-left: 64px;
+  transition: margin-left 0.3s ease;
 }
 
 
@@ -238,16 +259,22 @@ export default {
 }
 
 .credit-section {
-  background-color: #ffffff;
-  color: #333;
-  padding: 2rem;
-  border-radius: 1rem;
-  max-width: 900px;
-  margin: 0 auto 4rem auto;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  box-sizing: border-box;
+  background: #2f2f2f;
+  color: #ffffff;
+  padding: 2rem 2rem; /* padding kiri-kanan */
+  border-radius: 0;
+  width: 100%; /* gunakan full lebar */
+  margin: 0;
+  box-sizing: border-box; /* penting agar padding tidak menambah lebar */
   text-align: center;
 }
+
+
+.credit-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 
 .credit-description {
   font-size: 1rem;
@@ -263,8 +290,35 @@ export default {
   margin-bottom: 1.5rem;
 }
 
+.logo-card {
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* supaya ukurannya sama */
+  width: 140px; /* atur sesuai kebutuhan */
+  height: 110px; /* atur sesuai logo terbesar */
+}
+
+
 .credit-logo {
-  height: 60px;
+  max-height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.credit-logoi {
+  max-height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+
+.credit-logoa {
+  height: 90px;
   object-fit: contain;
 }
 
@@ -286,7 +340,7 @@ export default {
 .credit-col h3 {
   margin-top: 1rem;
   font-weight: 600;
-  color: #006666;
+  color: #ffffff;
 }
 
 .credit-col ul {
@@ -300,6 +354,12 @@ export default {
 
 
 /* Responsiveness on wide screens */
+@media screen and (min-width: 768px) {
+  .sidebar.expanded + .about-container {
+    margin-left: 200px;
+  }
+}
+
 @media screen and (min-width: 1440px) {
   .about-card {
     padding: 3rem;

@@ -25,75 +25,75 @@
   </template>
   
   <script>
-export default {
-  name: "ResetPasswordPage",
-  data() {
-    return {
-      password: '',
-      confirmPassword: '',
-      message: '',
-      resetSuccess: false,
-      token: ''
-    }
-  },
-  mounted() {
-    const query = this.$route.query
-    this.token = query.token
-
-    if (!this.token) {
-      this.message = "Token tidak ditemukan."
-    }
-  },
-  methods: {
-    async submitReset() {
+  export default {
+    name: "ResetPasswordPage",
+    data() {
+      return {
+        password: '',
+        confirmPassword: '',
+        message: '',
+        resetSuccess: false,
+        token: ''
+      }
+    },
+    mounted() {
+      const query = this.$route.query
+      this.token = query.token
+  
       if (!this.token) {
         this.message = "Token tidak ditemukan."
-        return
       }
-
-      if (!this.password || !this.confirmPassword) {
-        this.message = "Password dan konfirmasi wajib diisi."
-        return
-      }
-
-      if (this.password !== this.confirmPassword) {
-        this.message = "Password tidak sama."
-        return
-      }
-
-      try {
-        const response = await fetch(`http://localhost:5001/api/resetpassword?token=${this.token}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            password: this.password,
-            confirmPassword: this.confirmPassword
-          }),
-        })
-
-        if (!response.ok) {
-          const text = await response.text()
-          console.error("Response error:", text)
-          this.message = "Server error: " + response.status
+    },
+    methods: {
+      async submitReset() {
+        if (!this.token) {
+          this.message = "Token tidak ditemukan."
           return
         }
-
-        const data = await response.json()
-        if (data.success) {
-          this.message = "Password berhasil direset. Silakan login kembali."
-          this.resetSuccess = true
-        } else {
-          this.message = data.message || "Gagal reset password."
+  
+        if (!this.password || !this.confirmPassword) {
+          this.message = "Password dan konfirmasi wajib diisi."
+          return
         }
-      } catch (error) {
-        console.error(error)
-        this.message = "Terjadi kesalahan saat menghubungi server."
+  
+        if (this.password !== this.confirmPassword) {
+          this.message = "Password tidak sama."
+          return
+        }
+  
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/resetpassword?token=${this.token}`, { // ✅ DIUBAH
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              password: this.password,
+              confirmPassword: this.confirmPassword
+            }),
+          })
+  
+          if (!response.ok) {
+            const text = await response.text()
+            console.error("Response error:", text)
+            this.message = "Server error: " + response.status
+            return
+          }
+  
+          const data = await response.json()
+          if (data.success) {
+            this.message = "Password berhasil direset. Silakan login kembali."
+            this.resetSuccess = true
+          } else {
+            this.message = data.message || "Gagal reset password."
+          }
+        } catch (error) {
+          console.error(error)
+          this.message = "Terjadi kesalahan saat menghubungi server."
+        }
       }
     }
   }
-}
-</script>
-
+  </script>
+  
   
   <style scoped>
   .reset-password-page {

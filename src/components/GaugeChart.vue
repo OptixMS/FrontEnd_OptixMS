@@ -1,5 +1,5 @@
-<template>
-  <svg :width="size" :height="size / 2" viewBox="0 0 200 100">
+<template v-if="value !== null && value !== undefined">
+   <svg :width="size" :height="size / 2" viewBox="0 0 200 100">
     <!-- Background Arc -->
     <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#3e3e3e" stroke-width="20" />
 
