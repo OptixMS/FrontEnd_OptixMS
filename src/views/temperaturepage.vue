@@ -1,69 +1,113 @@
 <template>
-  <div class="temperature-container font-poppins">
-    <!-- Header -->
-    <div class="cardheader">
-      <router-link to="/dashboard">
-        <img src="@/assets/img/back.png" alt="Back" class="back" />
-      </router-link>
-    </div>
+  <div class="temperature-wrapper">
+    <Sidebar />
+    <div class="temperature-container font-poppins">
+      <div class="cardheader"></div>
 
-    <!-- Title -->
-    <div class="cardtitle">
-      <h1 class="titletemps">Site Temperature</h1>
-    </div>
+      <div class="cardtitle">
+        <h1 class="titletemps">Site Temperature</h1>
+      </div>
 
-    <!-- Grid Cards -->
-    <div class="card-grid">
-      <div
-        v-for="site in sites"
-        :key="site.name"
-        class="cardtemperature"
-      >
-        <img src="@/assets/img/temperatur.png" alt="Temperature Icon" class="sizeicon" />
-        <div class="cardtemps">{{ site.name }}</div>
-        <div class="cardtemps">{{ site.temp }}°C</div>
+      <div v-if="loading" class="info-message">Memuat data suhu situs...</div>
+      <div v-if="error" class="error-message">{{ error }}</div>
+
+      <div v-if="!loading && !error && sites.length" class="card-grid">
+        <div
+          v-for="site in sites"
+          :key="site.name"
+          class="cardtemperature"
+        >
+          <img :src="getTemperatureIcon(site.temp)" alt="Temperature Icon" class="sizeicon" />
+          <div class="cardtemps">{{ site.name }}</div>
+          <div class="cardtemps">{{ site.temp }}°C</div>
+        </div>
+      </div>
+      <div v-else-if="!loading && !error && !sites.length" class="info-message">
+        Tidak ada data suhu situs yang tersedia.
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'TemperaturePage',
-  data() {
-    return {
-      sites: [
-        { name: 'Banggai', temp: 26 },
-        { name: 'Bau-Bau', temp: 26 },
-        { name: 'Kendari', temp: 26 },
-        { name: 'Manado', temp: 26 },
-        { name: 'Sofifi', temp: 26 },
-        { name: 'Tentena', temp: 26 },
-        { name: 'Ternate', temp: 26 },
-        { name: 'Tobelo', temp: 26 },
-        { name: 'Long Bagun', temp: 26 },
-        { name: 'Luwuk', temp: 26 },
-        { name: 'Salakan', temp: 26 },
-        { name: 'Sanana', temp: 26 },
-        { name: 'Sendawar', temp: 26 },
-        { name: 'Taliabu', temp: 26 },
-        { name: 'Bungku', temp: 26 },
-        { name: 'Buranga', temp: 26 },
-        { name: 'Lakudo', temp: 26 },
-        { name: 'Melong', temp: 26 },
-        { name: 'Morotai', temp: 26 },
-        { name: 'Ondong', temp: 26 },
-        { name: 'Petasia', temp: 26 },
-        { name: 'Raha', temp: 26 },
-        { name: 'Sawerigadi', temp: 26 },
-        { name: 'Tahuna', temp: 26 },
-        { name: 'Tidore', temp: 26 },
-        { name: 'Wanggudu', temp: 26 },
-        { name: 'Wawonii', temp: 26 }
-      ]
-    };
+<script setup>
+import { ref, onMounted } from 'vue';
+import Sidebar from '@/components/sidebar.vue';
+
+const sites = ref([]);
+const loading = ref(false);
+const error = ref('');
+
+// URL dasar API Anda
+const baseUrl = import.meta.env.VITE_API_URL;
+
+// ✅ Path ke icon suhu
+const tempIconBlue = new URL('@/assets/img/temperatur-blue.png', import.meta.url).href; // Asumsi ada gambar ini
+const tempIconOrange = new URL('@/assets/img/temperatur-orange.png', import.meta.url).href; // Asumsi ada gambar ini
+
+// ✅ Fungsi untuk mendapatkan icon berdasarkan suhu
+function getTemperatureIcon(temperature) {
+  // Pastikan temperature adalah angka
+  const temp = parseFloat(temperature);
+  if (isNaN(temp)) {
+    return new URL('@/assets/img/temperatur.png', import.meta.url).href; // Default jika bukan angka
+  }
+
+  if (temp <= 25) {
+    return tempIconBlue;
+  } else {
+    return tempIconOrange;
   }
 }
+
+async function fetchSiteTemperature() {
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const res = await fetch(`${baseUrl}/api/sitetemperature`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw { status: res.status, message: errorData.message || res.statusText || 'Gagal mengambil data suhu situs dari server.' };
+    }
+
+    const responseJson = await res.json();
+
+    if (responseJson && Array.isArray(responseJson.data)) {
+      sites.value = responseJson.data.map(locationData => {
+        const tempValue = locationData.suhu && locationData.suhu.length > 0
+                          ? locationData.suhu[0].suhu_celcius
+                          : 'N/A';
+
+        return {
+          name: locationData.lokasi,
+          temp: tempValue
+        };
+      });
+    } else {
+      throw { message: responseJson.message || 'Format data suhu situs tidak valid dari backend.' };
+    }
+
+  } catch (err) {
+    console.error('Error fetching site temperature:', err);
+    if (err.status) {
+      error.value = `Error ${err.status}: ${err.message}`;
+    } else {
+      error.value = 'Terjadi kesalahan jaringan saat memuat suhu situs. Mohon periksa koneksi Anda.';
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  fetchSiteTemperature();
+});
 </script>
 
 <style scoped>
@@ -73,11 +117,11 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Hanya tampil di PC */
 @media (max-width: 1023px) {
-  body {
-    display: none;
-  }
+}
+
+.temperature-wrapper {
+  display: flex;
 }
 
 .temperature-container {
@@ -89,26 +133,26 @@ export default {
   box-sizing: border-box;
   overflow-x: hidden;
   padding: 0 4vw 4rem;
+  margin-left: 64px;
+  width: calc(100% - 64px);
 }
 
-/* Header */
 .cardheader {
   background-color: #4f4f4f;
   padding: 1rem 3rem;
   height: 76px;
-  width: calc(100% + 10vw); /* 8vw untuk mengimbangi padding kiri + kanan parent */
-  margin-left: -4vw; /* kompensasi padding parent agar sejajar kiri */
-  margin-right: -4vw; /* opsional: kalau butuh konsisten ke kanan */
-  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9); /* hanya bawah dan 90% opacity */
+  width: calc(100% + 10vw);
+  margin-left: -4vw;
+  margin-right: -4vw;
+  border-bottom: 1.3px solid rgba(62, 62, 62, 0.9);
   margin-bottom: 2rem;
   opacity: 0.9;
-
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .back {
@@ -117,20 +161,18 @@ export default {
   margin-left: 1rem;
 }
 
-/* Title */
 .cardtitle {
   background-color: #2f2f2f;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   padding: 1rem;
-  height: 50px; /* diperbesar sedikit agar teks tidak terpotong */
+  height: 50px;
   width: 97%;
   margin: 20px auto;
   border-radius: 1rem;
   max-width: 1200px;
-
   display: flex;
-  align-items: center;  /* vertikal center */
-  justify-content: center;  /* horizontal center */
+  align-items: center;
+  justify-content: center;
 }
 
 .titletemps {
@@ -144,8 +186,6 @@ export default {
   box-sizing: border-box;
 }
 
-
-/* Grid */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -167,7 +207,7 @@ export default {
 }
 
 .sizeicon {
-  height: 130px;
+  height: 130px; /* Ukuran ikon tetap */
 }
 
 .cardtemps {
@@ -176,5 +216,18 @@ export default {
   font-weight: 600;
   margin-top: 0.25rem;
 }
-</style>
 
+.info-message {
+  color: #ffffff;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.error-message {
+  color: #f8ac57;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+</style>

@@ -39,8 +39,7 @@
                 class="input-field"
               />
             </div>
-            <router-link to="/login"> 
-              <button type="submit" class="register-button">Register</button></router-link>
+            <button type="submit" class="register-button">Register</button>
           </form>
           <router-link to="/login"><p class="text-center text-sm text-white mt-4">
             Already have an account?
@@ -57,40 +56,64 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios'
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { postRequest } from '../api.js'; // Impor postRequest dari api.js
 
-export default {
-  name: "RegisterPage",
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      error: ''
+const router = useRouter();
+
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const error = ref('');
+
+const handleRegister = async () => {
+  error.value = ''; // Reset pesan error setiap kali percobaan registrasi
+
+  // Validasi sederhana di sisi frontend
+  if (!username.value || !email.value || !password.value) {
+    error.value = 'Semua field wajib diisi.';
+    return; // Hentikan eksekusi jika validasi gagal
+  }
+
+  try {
+    // Panggil postRequest dari api.js
+    // Endpoint register di account.js Anda adalah '/register'.
+    // Karena di app.js Anda menggunakan app.use('/api/account', accountRoutes);
+    // Maka path lengkapnya adalah '/api/account/register'.
+    // Di sini kita hanya perlu menulis '/account/register' karena api.js sudah menangani baseURL.
+    const response = await postRequest('/api/register', {
+      username: username.value,
+      email: email.value,
+      password: password.value
+    });
+
+    // Jika postRequest tidak melempar error, berarti responsnya 2xx (sukses)
+    // Respons dari backend: { success: true, message: 'Registrasi berhasil.' }
+    if (response.success) {
+      alert('Registrasi berhasil! Silakan login.'); // Beri feedback ke user
+      router.push('/login'); // Arahkan ke halaman login
+    } else {
+      // Ini akan tertangkap jika backend merespons 2xx tapi dengan success: false,
+      // misal karena ada validasi khusus yang tidak melempar status error 4xx.
+      // Namun, backend account.js Anda seharusnya sudah melempar 400 jika username sudah ada.
+      error.value = response.message || 'Registrasi gagal.';
     }
-  },
-  methods: {
-    async handleRegister() {
-      this.error = ''
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
-          username: this.username,
-          email: this.email,
-          password: this.password
-        })
-
-        if (response.data.success) {
-          this.$router.push('/login')
-        } else {
-          this.error = response.data.message || 'Registrasi gagal.'
-        }
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Gagal terhubung ke server.'
-      }
+  } catch (err) {
+    // Catch ini akan menangani error yang dilempar dari `api.js`
+    // (baik dari server 4xx/5xx, maupun masalah jaringan).
+    if (err.status) {
+      // Error dari server (misalnya 400 Bad Request: Username sudah digunakan.)
+      error.value = err.message;
+      console.error('Register error from server:', err.status, err.message);
+    } else {
+      // Masalah koneksi jaringan atau error lain saat menyiapkan request
+      error.value = 'Gagal terhubung ke server atau terjadi kesalahan jaringan.';
+      console.error('Register network/preparation error:', err);
     }
   }
-}
+};
 </script>
 
 

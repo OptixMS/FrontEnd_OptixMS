@@ -1,10 +1,10 @@
 <template>
+  <div class="site-wrapper">
+    <Sidebar />
+
   <div class="map-page-container font-poppins">
     <!-- Header n Back -->
     <div class="cardheader">
-      <router-link to="/dashboard" class="flex items-center">
-        <img src="@/assets/img/back.png" alt="Back" class="icon-button" />
-      </router-link>
     </div>
 
     <!-- Title -->
@@ -43,13 +43,18 @@
         </tbody>
       </table>
     </div>
-
+  </div>
   </div>
 </template>
 
 <script>
+import Sidebar from '@/components/sidebar.vue';
+
 export default {
-  name: 'MapPage',
+  name: 'MapPage', 
+  components: {
+    Sidebar
+  },
   data() {
     return {
       siteData: [
@@ -105,6 +110,10 @@ export default {
   cursor: pointer;
 }
 
+.map-wrapper {
+  display: flex;
+}
+
 .map-page-container {
   position: relative;
   min-height: 100vh;
@@ -115,6 +124,8 @@ export default {
   align-items: center;
   box-sizing: border-box;
   overflow-x: hidden;
+  margin-left: 64px;
+  width: calc(100% - 64px);
 }
 
 .cardheader {
